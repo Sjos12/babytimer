@@ -1,38 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:untitled/pages/home.dart';
+import 'package:untitled/pages/login.dart';
+import 'package:untitled/pages/register.dart';
+import 'firebase_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  // Init fireflutter
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        theme: ThemeData(primaryColor: Colors.deepPurpleAccent),
-        home: Scaffold(
-          floatingActionButton: FloatingActionButton(
-              child: Icon(Icons.add),
-              onPressed: () {
-                print('foo');
-              }),
-          appBar: AppBar(
-            title: Text('Hello world'),
-          ),
-          body: List(),
-        ));
-  }
-}2
+  // Init firebaseauth emulator
+  await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+  // Check auth state to choose widget
 
-class List extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-        child: ListTile(
-      title: Text('foo'),
-      subtitle: Text('subfoo'),
-      trailing: ElevatedButton(
-        child: Text('foo'),
-        onPressed: () {},
-      ),
-      onTap: () {},
-    ));
-  }
+  FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    if (user == null) {
+      print('Not logged in');
+      runApp(Register());
+    } else {
+      print('logged in');
+      runApp(MyApp());
+    }
+  });
 }
