@@ -1,3 +1,17 @@
-import 'package:flutter/cupertino.dart';
+class Time {
+  Time({
+    required this.type,
+    required this.length,
+    required this.order,
+    required this.target,
+  });
 
-class Time extends ChangeNotifier {}
+  // Nap or sleep
+  String type;
+  // Order of times
+  int order;
+  // Max length of time;
+  int target;
+  // Actual length of time
+  int length;
+}

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:untitled/pages/home.dart';
+import 'package:untitled/pages/register.dart';
 import 'package:untitled/widgets/layout.dart';
 
 class Login extends StatefulWidget {
@@ -11,7 +12,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   _submit() async {
     try {
-      this.user = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      user = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _email.text,
         password: _password.text,
       );
@@ -60,7 +61,14 @@ class _LoginState extends State<Login> {
               child: Text('check'),
               onPressed: () {
                 print(this.user.user?.email);
-              })
+              }),
+          Builder(
+              builder: (context) => FloatingActionButton(
+                  child: Text('Register instead'),
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Register()));
+                  })),
         ])));
   }
 }

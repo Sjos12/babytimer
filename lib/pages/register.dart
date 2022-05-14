@@ -62,12 +62,13 @@ class _RegisterState extends State<Register> {
               onPressed: () {
                 print(this.user.user?.email);
               }),
-          FloatingActionButton.small(
-              child: Text('login instead'),
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Login()));
-              }),
+          Builder(
+              builder: (context) => FloatingActionButton(
+                  child: Text('login instead'),
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Login()));
+                  })),
         ])));
   }
 }
