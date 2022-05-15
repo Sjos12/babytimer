@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:untitled/models/schedule.dart';
 import 'package:untitled/models/time.dart';
 import 'package:untitled/widgets/layout.dart';
+import 'package:untitled/widgets/schedule/create/time.dart';
 
 class Create extends StatefulWidget {
   @override
@@ -9,69 +11,106 @@ class Create extends StatefulWidget {
 }
 
 class _CreateState extends State<Create> {
-  late TextEditingController _name;
-  late List<Time> _times;
-
+  late Schedule _schedule;
+  let db = Firebase
   void initState() {
-    _name = TextEditingController();
-    _times = [];
+    _schedule = Schedule(name: '', target: 0, times: []);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    updateTime(Time time, int index) {
+      setState(() {
+        print('Updated time ${_schedule.times}');
+        _schedule.times[index] = time;
+
+        int total = 0;
+        _schedule.times.forEach((Time time) {
+          total += time.length;
+        });
+        _schedule.total = total;
+      });
+    }
+
     // TODO: implement build
     return Layout(
-      title: 'Create a schedule',
-      body: Center(
-          child: Column(
-        children: <Widget>[
-          TextField(),
-          SingleChildScrollView(
-            child: ReorderableListView(
-              shrinkWrap: true,
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              children: <Widget>[
-                for (int index = 0; index < _times.length; index += 1)
-                  Card(
-                    key: Key('$index'),
-                    child: Row(
-                      children: const <Widget>[
-                        Text('Item nap'),
-                        TextField(),
-                      ],
-                    ),
+        title: 'Create a schedule',
+        body: SingleChildScrollView(
+          child: Center(
+              child: Column(
+            children: <Widget>[
+              const Padding(
+                padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                child: TextField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Give schedule a name',
                   ),
-              ],
-              onReorder: (int oldIndex, int newIndex) {
-                setState(() {
-                  if (oldIndex < newIndex) {
-                    newIndex -= 1;
-                  }
-                  final Time item = _times.removeAt(oldIndex);
-                  _times.insert(newIndex, item);
-                });
-              },
-            ),
-          ),
-          Row(
-            children: [
-              FloatingActionButton(
-                  child: Text('Add nap'),
-                  onPressed: () {
-                    Time time =
-                        Time(type: 'nap', length: 3000, order: 3, target: 4000);
-                    setState(() {
-                      _times = [..._times, time];
-                    });
-                  }),
-              FloatingActionButton(child: Text('Add sleep'), onPressed: () {}),
-              FloatingActionButton(
-                  child: Text('Add wake time'), onPressed: () {}),
+                ),
+              ),
+              Text('Planned ${_schedule.total}/24 Hours'),
+              ReorderableListView(
+                shrinkWrap: true,
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                children: <Widget>[
+                  for (int index = 0;
+                      index < _schedule.times.length;
+                      index += 1)
+                    TimeCard(
+                      key: Key('$index'),
+                      index: index,
+                      time: _schedule.times[index],
+                      updateTime: updateTime,
+                    )
+                ],
+                onReorder: (int oldIndex, int newIndex) {
+                  setState(() {
+                    if (oldIndex < newIndex) {
+                      newIndex -= 1;
+                    }
+                    final Time item = _schedule.times.removeAt(oldIndex);
+                    _schedule.times.insert(newIndex, item);
+                  });
+                },
+              ),
+              Wrap(
+                alignment: WrapAlignment.center,
+                children: [
+                  FloatingActionButton(
+                      child: Text('Add nap'),
+                      onPressed: () {
+                        Time time = Time(
+                            type: 'nap', length: 3000, order: 3, target: 4000);
+                        setState(() {
+                          _schedule.times = [..._schedule.times, time];
+                        });
+                      }),
+                  FloatingActionButton(
+                      child: Text('Add sleep'),
+                      onPressed: () {
+                        Time time = Time(
+                            type: 'sleep',
+                            length: 3000,
+                            order: 3,
+                            target: 4000);
+                        setState(() {
+                          _schedule.times = [..._schedule.times, time];
+                        });
+                      }),
+                  FloatingActionButton(
+                      child: Text('Add waketime'),
+                      onPressed: () {
+                        Time time = Time(
+                            type: 'wake', length: 3000, order: 3, target: 4000);
+                        setState(() {
+                          _schedule.times = [..._schedule.times, time];
+                        });
+                      }),
+                ],
+              )
             ],
-          )
-        ],
-      )),
-    );
+          )),
+        ));
   }
 }
