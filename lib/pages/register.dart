@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:untitled/pages/home.dart';
@@ -12,10 +13,14 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   _submit() async {
     try {
-      this.user = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      var result = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _email.text,
         password: _password.text,
       );
+      User user = result.user;
+      await FirebaseFirestore.instance.collection('users')
+            .doc(user.uid)
+            .set({ 'firstName': _firstName})
     } on FirebaseAuthException catch (e) {
       print(e);
       if (e.code == 'weak-password') {

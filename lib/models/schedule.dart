@@ -10,6 +10,16 @@ class Schedule {
   });
   String name;
   List<Time> times;
+  // Target hours in a day (sum of all lengths)
   int target;
+  // Total hours currently selected
   int total = 0;
+
+  Map<String, dynamic> toMap() {
+    return {
+      "name": name,
+      "target": target,
+      "total": total,
+    };
+  }
 }

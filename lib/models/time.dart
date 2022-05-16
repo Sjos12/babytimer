@@ -14,4 +14,13 @@ class Time {
   int target;
   // Actual length of time
   int length;
+
+  Map<String, dynamic> toMap() {
+    return {
+      "type": type,
+      "order": order,
+      "target": target,
+      "length": length,
+    };
+  }
 }

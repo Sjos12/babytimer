@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:untitled/models/schedule.dart';
@@ -12,10 +13,21 @@ class Create extends StatefulWidget {
 
 class _CreateState extends State<Create> {
   late Schedule _schedule;
-  let db = Firebase
+  FirebaseFirestore db = FirebaseFirestore.instance;
   void initState() {
     _schedule = Schedule(name: '', target: 0, times: []);
     super.initState();
+  }
+
+  void store() {
+    // Store schedule
+    db
+        .collection('schedules')
+        .add(_schedule.toMap())
+        .then((DocumentReference doc) {
+      print(doc);
+    });
+    // Store times
   }
 
   @override
