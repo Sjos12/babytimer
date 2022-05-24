@@ -13,12 +13,12 @@ class MyApp extends StatelessWidget {
         actionButton: Builder(
           builder: (context) => FloatingActionButton(
               heroTag: 'add',
-              child: Icon(Icons.add),
+              child: const Icon(Icons.add),
               onPressed: () {
                 Navigator.push(
                     context, MaterialPageRoute(builder: (context) => Create()));
               }),
         ),
-        body: SingleChildScrollView(child: List()));
+        body: SingleChildScrollView(child: ScheduleList()));
   }
 }

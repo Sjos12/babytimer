@@ -17,8 +17,8 @@ class Time {
 
   Map<String, dynamic> toMap() {
     return {
-      "type": type,
       "order": order,
+      "type": type,
       "target": target,
       "length": length,
     };

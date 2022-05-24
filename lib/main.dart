@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:untitled/pages/home.dart';
@@ -15,6 +16,7 @@ void main() async {
 
   // Init firebaseauth emulator
   await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+  FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
   // Check auth state to choose widget
 
   FirebaseAuth.instance.authStateChanges().listen((User? user) {

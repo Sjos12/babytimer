@@ -17,10 +17,11 @@ class _RegisterState extends State<Register> {
         email: _email.text,
         password: _password.text,
       );
-      User user = result.user;
-      await FirebaseFirestore.instance.collection('users')
-            .doc(user.uid)
-            .set({ 'firstName': _firstName})
+      User user = result.user as User;
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .set({'firstName': user.displayName, 'email': user.email});
     } on FirebaseAuthException catch (e) {
       print(e);
       if (e.code == 'weak-password') {

@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:untitled/models/auth.dart';
 import 'package:untitled/models/schedule.dart';
 import 'package:untitled/models/time.dart';
+import 'package:untitled/widgets/home/list.dart';
 import 'package:untitled/widgets/layout.dart';
 import 'package:untitled/widgets/schedule/create/time.dart';
 
@@ -14,6 +16,7 @@ class Create extends StatefulWidget {
 class _CreateState extends State<Create> {
   late Schedule _schedule;
   FirebaseFirestore db = FirebaseFirestore.instance;
+
   void initState() {
     _schedule = Schedule(name: '', target: 0, times: []);
     super.initState();
@@ -21,11 +24,19 @@ class _CreateState extends State<Create> {
 
   void store() {
     // Store schedule
+    Auth auth = Auth();
+    String path = 'schedules';
+    print(path);
+    // db.useFirestoreEmulator('localhost', 8080);
+    print(_schedule.toMap().toString());
+
     db
-        .collection('schedules')
+        .collection(path)
+        .doc(auth.getUser()!.uid)
+        .collection(auth.getUser()!.uid)
         .add(_schedule.toMap())
         .then((DocumentReference doc) {
-      print(doc);
+      Navigator.pop(context);
     });
     // Store times
   }
@@ -52,10 +63,13 @@ class _CreateState extends State<Create> {
           child: Center(
               child: Column(
             children: <Widget>[
-              const Padding(
-                padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
                 child: TextField(
-                  decoration: InputDecoration(
+                  onChanged: (text) {
+                    _schedule.name = text;
+                  },
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Give schedule a name',
                   ),
@@ -90,6 +104,7 @@ class _CreateState extends State<Create> {
                 alignment: WrapAlignment.center,
                 children: [
                   FloatingActionButton(
+                      heroTag: 'nap',
                       child: Text('Add nap'),
                       onPressed: () {
                         Time time = Time(
@@ -99,6 +114,7 @@ class _CreateState extends State<Create> {
                         });
                       }),
                   FloatingActionButton(
+                      heroTag: 'sleep',
                       child: Text('Add sleep'),
                       onPressed: () {
                         Time time = Time(
@@ -111,6 +127,7 @@ class _CreateState extends State<Create> {
                         });
                       }),
                   FloatingActionButton(
+                      heroTag: 'waketime',
                       child: Text('Add waketime'),
                       onPressed: () {
                         Time time = Time(
@@ -120,7 +137,11 @@ class _CreateState extends State<Create> {
                         });
                       }),
                 ],
-              )
+              ),
+              FloatingActionButton(
+                  heroTag: 'save',
+                  child: Text('Save'),
+                  onPressed: () => store())
             ],
           )),
         ));
