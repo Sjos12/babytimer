@@ -7,6 +7,7 @@ class TimeCard extends StatefulWidget {
   late Time time;
 
   final updateTime;
+
   TimeCard(
       {required Key key,
       required this.index,
@@ -25,7 +26,7 @@ class _TimeCardState extends State<TimeCard> {
         spacing: 20,
         children: <Widget>[
           Text(
-            'Item ' + widget.time.type,
+            'Item ' + widget.time.type + 'order' + widget.time.order.toString(),
             style: const TextStyle(
               fontSize: 20,
               fontFamily: 'Roboto',

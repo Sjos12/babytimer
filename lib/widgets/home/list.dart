@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:untitled/models/auth.dart';
 import 'package:untitled/models/schedule.dart';
+import 'package:untitled/models/schedule_generator.dart';
 import 'package:untitled/widgets/home/item.dart';
 
 class ScheduleList extends StatelessWidget {
@@ -38,6 +39,7 @@ class ScheduleList extends StatelessWidget {
           children: snapshot.data!.docs
               .map((DocumentSnapshot document) {
                 Schedule data = document.data() as Schedule;
+
                 return ListItem(schedule: data);
               })
               .toList()
@@ -67,15 +69,23 @@ class ListItem extends StatelessWidget {
       children: <Widget>[
         Card(
             child: ListTile(
-          title: const Text('Baby joe sleep'),
-          subtitle: const Text('subfoo'),
+          onLongPress: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (builder) => ItemPage(
+                        schedule: schedule,
+                      ))),
+          title: Text(schedule.name),
+          subtitle: Text('active ' + schedule.active.toString()),
           trailing: ElevatedButton(
             child: Text(actionButtonText),
             onPressed: () {
-              Navigator.push(
+              schedule.active = !schedule.active;
+              ScheduleGenerator(schedule: schedule).generate().save();
+              /*Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const ItemPage()),
-              );
+              );*/
             },
           ),
           onTap: () {},

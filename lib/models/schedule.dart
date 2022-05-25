@@ -6,10 +6,12 @@ import 'package:flutter/cupertino.dart';
 
 class Schedule {
   Schedule({
+    required this.uid,
     required this.name,
     required this.times,
     required this.target,
   });
+  String uid = '';
   String name = '';
   List<Time> times = [];
   // Target hours in a day (sum of all lengths)
@@ -30,9 +32,12 @@ class Schedule {
               order: time['order'],
               target: time['target'],
               type: time['type'],
+              startTime: time['start_time'],
+              endTime: time['end_time'],
             ))
         .toList();
     return Schedule(
+      uid: snapshot.id,
       name: data?['name'],
       times: times,
       target: data?['target'],

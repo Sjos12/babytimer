@@ -1,10 +1,11 @@
 class Time {
-  Time({
-    required this.type,
-    required this.length,
-    required this.order,
-    required this.target,
-  });
+  Time(
+      {required this.type,
+      required this.length,
+      required this.order,
+      required this.target,
+      this.startTime,
+      this.endTime});
 
   // Nap or sleep
   String type;
@@ -15,8 +16,9 @@ class Time {
   // Actual length of time
   int length;
 
-  String? startTime;
-  String? endTime;
+  String? startTime = DateTime.now().toString();
+  String? endTime = DateTime.now().add(const Duration(hours: 1)).toString();
+
   Map<String, dynamic> toMap() {
     return {
       "order": order,

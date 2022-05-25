@@ -15,10 +15,11 @@ class Create extends StatefulWidget {
 
 class _CreateState extends State<Create> {
   late Schedule _schedule;
+  int index = 0;
   FirebaseFirestore db = FirebaseFirestore.instance;
 
   void initState() {
-    _schedule = Schedule(name: '', target: 0, times: []);
+    _schedule = Schedule(uid: '', name: '', target: 0, times: []);
     super.initState();
   }
 
@@ -56,7 +57,6 @@ class _CreateState extends State<Create> {
       });
     }
 
-    // TODO: implement build
     return Layout(
         title: 'Create a schedule',
         body: SingleChildScrollView(
@@ -96,6 +96,7 @@ class _CreateState extends State<Create> {
                       newIndex -= 1;
                     }
                     final Time item = _schedule.times.removeAt(oldIndex);
+                    item.order = newIndex;
                     _schedule.times.insert(newIndex, item);
                   });
                 },
@@ -108,7 +109,11 @@ class _CreateState extends State<Create> {
                       child: Text('Add nap'),
                       onPressed: () {
                         Time time = Time(
-                            type: 'nap', length: 3000, order: 3, target: 4000);
+                            type: 'nap',
+                            length: 3000,
+                            order: index,
+                            target: 4000);
+                        index++;
                         setState(() {
                           _schedule.times = [..._schedule.times, time];
                         });
@@ -120,8 +125,9 @@ class _CreateState extends State<Create> {
                         Time time = Time(
                             type: 'sleep',
                             length: 3000,
-                            order: 3,
+                            order: index,
                             target: 4000);
+                        index++;
                         setState(() {
                           _schedule.times = [..._schedule.times, time];
                         });
@@ -131,7 +137,11 @@ class _CreateState extends State<Create> {
                       child: Text('Add waketime'),
                       onPressed: () {
                         Time time = Time(
-                            type: 'wake', length: 3000, order: 3, target: 4000);
+                            type: 'wake',
+                            length: 3000,
+                            order: index,
+                            target: 4000);
+                        index++;
                         setState(() {
                           _schedule.times = [..._schedule.times, time];
                         });
