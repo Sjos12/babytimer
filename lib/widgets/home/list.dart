@@ -9,18 +9,18 @@ import 'package:untitled/widgets/home/item.dart';
 class ScheduleList extends StatelessWidget {
   List _list = [];
 
-  Future<void> getList() async {}
   @override
   Widget build(BuildContext context) {
     Auth auth = Auth();
     FirebaseFirestore db = FirebaseFirestore.instance;
     final _stream = db
         .collection("schedules")
-        .withConverter(
-            toFirestore: (Schedule schedule, options) => schedule.toMap(),
-            fromFirestore: Schedule.fromFirestore)
         .doc(auth.getUser()!.uid)
         .collection(auth.getUser()!.uid)
+        .withConverter(
+            toFirestore: (Schedule schedule, options) => schedule.toMap(),
+            fromFirestore: (snapshot, options) =>
+                Schedule.fromFirestore(snapshot, options))
         .snapshots();
 
     return StreamBuilder<QuerySnapshot>(
@@ -37,8 +37,7 @@ class ScheduleList extends StatelessWidget {
         return Column(
           children: snapshot.data!.docs
               .map((DocumentSnapshot document) {
-                Map<String, dynamic> data =
-                    document.data()! as Map<String, dynamic>;
+                Schedule data = document.data() as Schedule;
                 return ListItem(schedule: data);
               })
               .toList()
@@ -46,27 +45,24 @@ class ScheduleList extends StatelessWidget {
         );
       },
     );
-
-    @override
-    Widget build(BuildContext context) {
-      getList();
-      return Container(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            children: <Widget>[
-              for (int i = 0; i < _list.length; i++)
-                ListItem(schedule: _list[i]),
-            ],
-          ));
-    }
   }
 }
 
 class ListItem extends StatelessWidget {
   ListItem({Key? key, required this.schedule}) : super(key: key);
-  Object schedule;
+  Schedule schedule;
+  String actionButtonText = 'Save';
+
   @override
   Widget build(BuildContext context) {
+    if (schedule.active == false) {
+      actionButtonText = 'Start schedule';
+    }
+
+    void activate() {
+      schedule.active = true;
+    }
+
     return Column(
       children: <Widget>[
         Card(
@@ -74,7 +70,7 @@ class ListItem extends StatelessWidget {
           title: const Text('Baby joe sleep'),
           subtitle: const Text('subfoo'),
           trailing: ElevatedButton(
-            child: const Text('Wake up'),
+            child: Text(actionButtonText),
             onPressed: () {
               Navigator.push(
                 context,

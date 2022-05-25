@@ -15,12 +15,16 @@ class Time {
   // Actual length of time
   int length;
 
+  String? startTime;
+  String? endTime;
   Map<String, dynamic> toMap() {
     return {
       "order": order,
       "type": type,
       "target": target,
       "length": length,
+      "start_time": startTime,
+      "end_time": endTime
     };
   }
 }
