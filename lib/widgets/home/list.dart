@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:untitled/enums/time_types.dart';
 import 'package:untitled/models/auth.dart';
 import 'package:untitled/models/schedule.dart';
 import 'package:untitled/models/schedule_generator.dart';
@@ -39,7 +40,6 @@ class ScheduleList extends StatelessWidget {
           children: snapshot.data!.docs
               .map((DocumentSnapshot document) {
                 Schedule data = document.data() as Schedule;
-
                 return ListItem(schedule: data);
               })
               .toList()
@@ -65,6 +65,20 @@ class ListItem extends StatelessWidget {
       schedule.active = true;
     }
 
+    Widget? getActiveIcon() {
+      switch (schedule.activeTime!.type) {
+        case (TimeTypes.nap):
+        case (TimeTypes.sleep):
+          return const Icon(CupertinoIcons.zzz);
+          break;
+        case (TimeTypes.wake):
+          return const Icon(CupertinoIcons.sun_max);
+          break;
+        default:
+          return const FlutterLogo();
+      }
+    }
+
     return Column(
       children: <Widget>[
         Card(
@@ -75,13 +89,14 @@ class ListItem extends StatelessWidget {
                   builder: (builder) => ItemPage(
                         schedule: schedule,
                       ))),
+          leading: getActiveIcon(),
           title: Text(schedule.name),
           subtitle: Text('active ' + schedule.active.toString()),
           trailing: ElevatedButton(
             child: Text(actionButtonText),
             onPressed: () {
               schedule.active = !schedule.active;
-              ScheduleGenerator(schedule: schedule).generate().save();
+              ScheduleManager(schedule: schedule).generate().save();
               /*Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const ItemPage()),

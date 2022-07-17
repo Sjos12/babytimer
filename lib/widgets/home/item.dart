@@ -13,7 +13,7 @@ class ItemPage extends StatelessWidget {
 
     for (Time time in schedule.times) {
       print(time.startTime);
-      DateTime dateTime = DateTime.parse(time.startTime as String);
+      DateTime dateTime = DateTime.now();
       String displayTime = '${dateTime.hour} : ${dateTime.minute}';
       timeline.add(TimelineTile(
         indicatorStyle: IndicatorStyle(
@@ -26,7 +26,7 @@ class ItemPage extends StatelessWidget {
         lineXY: 0.2,
         endChild: Card(
           child: ListTile(
-            title: Text(time.type),
+            title: Text(time.type.toString()),
             subtitle: Text('Duration: ${time.length} Hrs'),
           ),
         ),

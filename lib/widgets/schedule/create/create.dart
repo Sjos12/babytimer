@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:untitled/enums/time_types.dart';
 import 'package:untitled/models/auth.dart';
 import 'package:untitled/models/schedule.dart';
+import 'package:untitled/models/schedule_generator.dart';
 import 'package:untitled/models/time.dart';
 import 'package:untitled/widgets/home/list.dart';
 import 'package:untitled/widgets/layout.dart';
@@ -19,7 +21,7 @@ class _CreateState extends State<Create> {
   FirebaseFirestore db = FirebaseFirestore.instance;
 
   void initState() {
-    _schedule = Schedule(uid: '', name: '', target: 0, times: []);
+    _schedule = Schedule(uid: '', name: '', times: []);
     super.initState();
   }
 
@@ -30,13 +32,16 @@ class _CreateState extends State<Create> {
     print(path);
     // db.useFirestoreEmulator('localhost', 8080);
     print(_schedule.toMap().toString());
-
+    print(auth.getUser()!.uid);
     db
         .collection(path)
         .doc(auth.getUser()!.uid)
         .collection(auth.getUser()!.uid)
         .add(_schedule.toMap())
         .then((DocumentReference doc) {
+      // Generate startTime and endTime
+
+      ScheduleManager(schedule: _schedule).generate().save();
       Navigator.pop(context);
     });
     // Store times
@@ -109,7 +114,7 @@ class _CreateState extends State<Create> {
                       child: Text('Add nap'),
                       onPressed: () {
                         Time time = Time(
-                            type: 'nap',
+                            type: TimeTypes.nap,
                             length: 3000,
                             order: index,
                             target: 4000);
@@ -123,10 +128,11 @@ class _CreateState extends State<Create> {
                       child: Text('Add sleep'),
                       onPressed: () {
                         Time time = Time(
-                            type: 'sleep',
-                            length: 3000,
-                            order: index,
-                            target: 4000);
+                          type: TimeTypes.sleep,
+                          length: 3000,
+                          order: index,
+                          target: 4000,
+                        );
                         index++;
                         setState(() {
                           _schedule.times = [..._schedule.times, time];
@@ -137,7 +143,7 @@ class _CreateState extends State<Create> {
                       child: Text('Add waketime'),
                       onPressed: () {
                         Time time = Time(
-                            type: 'wake',
+                            type: TimeTypes.wake,
                             length: 3000,
                             order: index,
                             target: 4000);

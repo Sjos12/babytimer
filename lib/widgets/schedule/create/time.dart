@@ -26,7 +26,7 @@ class _TimeCardState extends State<TimeCard> {
         spacing: 20,
         children: <Widget>[
           Text(
-            'Item ' + widget.time.type + 'order' + widget.time.order.toString(),
+            'Item ' + 'order' + widget.time.order.toString(),
             style: const TextStyle(
               fontSize: 20,
               fontFamily: 'Roboto',
